@@ -3,24 +3,35 @@ package chickenInvaders.game;
 import chickenInvaders.AppConfig;
 import chickenInvaders.GameMain;
 import chickenInvaders.GameState;
+import chickenInvaders.entity.Bullet;
+import chickenInvaders.entity.Plane;
 import chickenInvaders.model.User;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private final GameMain app;
     private final User user;
-
     private final Timer timer;
 
     private int gameState;
+    private int level;
+    private int score;
 
-    private int planeX;
-    private int planeY;
-    private int planeSpeed;
+    private Plane plane;
+    private List<Bullet> bullets;
 
     private boolean leftPressed;
     private boolean rightPressed;
@@ -38,13 +49,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         timer = new Timer(AppConfig.FPS_DELAY, this);
 
         gameState = GameState.RUNNING;
+        level = 1;
+        score = 0;
 
-        planeX = AppConfig.WINDOW_WIDTH / 2 - 20;
-        planeY = AppConfig.WINDOW_HEIGHT - 100;
-        planeSpeed = 5;
+        plane = new Plane(AppConfig.WINDOW_WIDTH / 2 - 22, AppConfig.WINDOW_HEIGHT - 110);
+        bullets = new ArrayList<>();
     }
 
     public void startGame() {
+        requestFocusInWindow();
         timer.start();
     }
 
@@ -53,37 +66,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             return;
         }
 
-        if (leftPressed) {
-            planeX -= planeSpeed;
+        plane.move(leftPressed, rightPressed, upPressed, downPressed);
+        updateBullets();
+    }
+
+    private void updateBullets() {
+        Iterator<Bullet> iterator = bullets.iterator();
+
+        while (iterator.hasNext()) {
+            Bullet bullet = iterator.next();
+            bullet.update();
+
+            if (!bullet.isActive()) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private void shoot() {
+        if (gameState != GameState.RUNNING) {
+            return;
         }
 
-        if (rightPressed) {
-            planeX += planeSpeed;
-        }
-
-        if (upPressed) {
-            planeY -= planeSpeed;
-        }
-
-        if (downPressed) {
-            planeY += planeSpeed;
-        }
-
-        if (planeX < 0) {
-            planeX = 0;
-        }
-
-        if (planeX > AppConfig.WINDOW_WIDTH - 40) {
-            planeX = AppConfig.WINDOW_WIDTH - 40;
-        }
-
-        if (planeY < 40) {
-            planeY = 40;
-        }
-
-        if (planeY > AppConfig.WINDOW_HEIGHT - 80) {
-            planeY = AppConfig.WINDOW_HEIGHT - 80;
-        }
+        bullets.addAll(plane.shoot());
     }
 
     @Override
@@ -91,11 +96,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
 
         drawHud(g);
-        drawPlane(g);
+        plane.draw(g);
+        drawBullets(g);
 
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("gamePanel started. next step: Plane + Bullets + Enemies", 170, 300);
+        if (gameState == GameState.PAUSED) {
+            drawPause(g);
+        }
     }
 
     private void drawHud(Graphics g) {
@@ -103,17 +109,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("Arial", Font.BOLD, 14));
 
         g.drawString("User: " + user.getUsername(), 20, 25);
-        g.drawString("Level: 1", 170, 25);
-        g.drawString("Score: 0", 270, 25);
-        g.drawString("Lives: 3", 370, 25);
+        g.drawString("Level: " + level, 170, 25);
+        g.drawString("Score: " + score, 270, 25);
+        g.drawString("Lives: " + plane.getLives(), 370, 25);
+        g.drawString("Fire: " + plane.getFireCount(), 470, 25);
+        g.drawString("P: Pause | ESC: Menu | SPACE: Shoot", 20, AppConfig.WINDOW_HEIGHT - 55);
     }
 
-    private void drawPlane(Graphics g) {
-        g.setColor(Color.CYAN);
-        g.fillRect(planeX, planeY, 40, 40);
+    private void drawBullets(Graphics g) {
+        for (Bullet bullet : bullets) {
+            bullet.draw(g);
+        }
+    }
+
+    private void drawPause(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 160));
+        g.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
 
         g.setColor(Color.WHITE);
-        g.drawRect(planeX, planeY, 40, 40);
+        g.setFont(new Font("Arial", Font.BOLD, 42));
+        g.drawString("PAUSED", 310, 300);
     }
 
     @Override
@@ -140,6 +155,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
             downPressed = true;
+        }
+
+        if (key == KeyEvent.VK_SPACE) {
+            shoot();
         }
 
         if (key == KeyEvent.VK_P) {
