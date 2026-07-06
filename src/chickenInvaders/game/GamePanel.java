@@ -122,6 +122,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         } else {
             enemyGrid.update(frozen, plane);
+
+            if (enemyGrid.hasEnemyReachedBottom()) {
+                endGame(GameState.GAME_OVER);
+                return;
+            }
         }
 
         collisionManager.update(

@@ -24,10 +24,6 @@ public class EnemyGrid {
     private static final int EDGE_MARGIN = 20;
 
 
-    private static final int SAFETY_MARGIN = 100;
-    private static final int MAX_SHIFT_Y =
-        AppConfig.WINDOW_HEIGHT - SAFETY_MARGIN - MAX_ENEMY_HEIGHT - (START_Y + (ROWS - 1) * GAP_Y);
-
     private final EnemyCell[] cells = new EnemyCell[ROWS * COLS];
     private final List<Egg> eggs = new ArrayList<>();
 
@@ -75,13 +71,13 @@ public class EnemyGrid {
 
     private void setupLevelParams(int level) {
         switch (level) {
-            case 1 -> { speed = 1.5; verticalStep = 20; eggIntervalMs = 3000; }
-            case 2 -> { speed = 2.0; verticalStep = 20; eggIntervalMs = 2000; }
-            case 3 -> { speed = 1.5; verticalStep = 25; eggIntervalMs = 1500; }
-            case 5 -> { speed = 2.5; verticalStep = 25; eggIntervalMs = 1000; }
-            case 6 -> { speed = 3.0; verticalStep = 30; eggIntervalMs = 800; }
-            case 7 -> { speed = 3.5; verticalStep = 30; eggIntervalMs = 700; }
-            default -> { speed = 1.0; verticalStep = 20; eggIntervalMs = 3000; }
+            case 1 -> { speed = 0.7; verticalStep = 20; eggIntervalMs = 3000; }
+            case 2 -> { speed = 1.0; verticalStep = 20; eggIntervalMs = 2000; }
+            case 3 -> { speed = 1.3; verticalStep = 25; eggIntervalMs = 1500; }
+            case 5 -> { speed = 1.7; verticalStep = 25; eggIntervalMs = 1000; }
+            case 6 -> { speed = 2.0; verticalStep = 30; eggIntervalMs = 800; }
+            case 7 -> { speed = 2.3; verticalStep = 30; eggIntervalMs = 700; }
+            default -> { speed = 0.7; verticalStep = 20; eggIntervalMs = 3000; }
         }
     }
 
@@ -144,7 +140,7 @@ public class EnemyGrid {
 
         if (leftEdge <= EDGE_MARGIN || rightEdge >= AppConfig.WINDOW_WIDTH - EDGE_MARGIN) {
             direction *= -1;
-            shiftY = Math.min(MAX_SHIFT_Y, shiftY + verticalStep);
+            shiftY += verticalStep;
         } else {
             shiftX = nextShiftX;
         }
@@ -289,5 +285,18 @@ public class EnemyGrid {
 
     public List<Egg> getEggs() {
         return eggs;
+    }
+
+    //if a chicken gone out of the page then game is over
+    public boolean hasEnemyReachedBottom() {
+        for (EnemyCell cell : cells) {
+            Enemy occ = cell.getOccupant();
+            if (occ != null && occ.isActive()) {
+                if (occ.getY() + occ.getHeight() >= AppConfig.WINDOW_HEIGHT) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
