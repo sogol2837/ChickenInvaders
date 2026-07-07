@@ -17,14 +17,20 @@ import chickenInvaders.model.GameRecord;
 import chickenInvaders.model.PowerUpType;
 import chickenInvaders.model.SoundSettings;
 import chickenInvaders.model.User;
+import chickenInvaders.ui.UiStyle;
 import chickenInvaders.util.ImageLoader;
 
-import java.awt.Image;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -285,51 +291,83 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawHud(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 14));
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.drawString("User: " + user.getUsername(), 20, 20);
-        g.drawString("Level: " + levelManager.getCurrentLevel(), 160, 20);
-        g.drawString("Score: " + scoreManager.getScore(), 250, 20);
-        g.drawString("Lives: " + plane.getLives(), 360, 20);
-        g.drawString("Fire: " + plane.getFireCount(), 450, 20);
+        drawHudBox(g2, 14, 10, 520, 34);
+        drawHudBox(g2, 540, 10, 246, 34);
+        drawHudBox(g2, 14, AppConfig.WINDOW_HEIGHT - 38, 380, 24);
 
-        int statusX = 540;
+        g2.setFont(new Font("Monospaced", Font.BOLD, 15));
+        g2.setColor(Color.WHITE);
+        g2.drawString("USER: " + user.getUsername(), 25, 32);
+        g2.drawString("LEVEL: " + levelManager.getCurrentLevel(), 155, 32);
+        g2.drawString("SCORE: " + scoreManager.getScore(), 285, 32);
+        g2.drawString("LIVES: " + plane.getLives(), 445, 32);
+
+        g2.setColor(UiStyle.WARNING);
+        g2.drawString("FIRE: " + plane.getFireCount(), 555, 32);
+
+        int statusX = 650;
         if (plane.isShieldActive()) {
-            g.setColor(Color.CYAN);
-            g.drawString("Shield " + plane.getShieldSecondsLeft() + "s", statusX, 20);
-            statusX += 90;
+            g2.setColor(UiStyle.CYAN);
+            g2.drawString("SHIELD " + plane.getShieldSecondsLeft() + "s", statusX, 32);
+            statusX += 105;
         }
         if (plane.isRapidFireActive()) {
-            g.setColor(Color.ORANGE);
-            g.drawString("Rapid " + plane.getRapidFireSecondsLeft() + "s", statusX, 20);
+            g2.setColor(new Color(255, 180, 90));
+            g2.drawString("RAPID " + plane.getRapidFireSecondsLeft() + "s", statusX, 32);
         }
         if (System.currentTimeMillis() < freezeUntil) {
-            g.setColor(Color.BLUE);
-            g.drawString("Frozen!", 20, 40);
+            g2.setColor(new Color(170, 210, 255));
+            g2.drawString("ENEMIES FROZEN", 620, 32);
         }
 
-        g.setColor(Color.WHITE);
-        g.drawString("P: Pause | ESC: Menu | SPACE: Shoot | M: Sound Settings", 20, AppConfig.WINDOW_HEIGHT - 15);
+        g2.setColor(new Color(230, 235, 245));
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        g2.drawString("P Pause   M Sound Settings   ESC Menu   SPACE Shoot", 24, AppConfig.WINDOW_HEIGHT - 21);
+        g2.dispose();
+    }
+
+    private void drawHudBox(Graphics2D g2, int x, int y, int w, int h) {
+        g2.setColor(new Color(0, 0, 0, 145));
+        g2.fillRoundRect(x, y, w, h, 14, 14);
+        g2.setStroke(new BasicStroke(2f));
+        g2.setColor(new Color(220, 225, 235, 215));
+        g2.drawRoundRect(x, y, w, h, 14, 14);
+        g2.setColor(new Color(0, 210, 245, 105));
+        g2.drawRoundRect(x + 2, y + 2, w - 4, h - 4, 12, 12);
     }
 
     private void drawSettingsOverlay(Graphics g) {
-        g.setColor(new Color(0, 0, 0, 190));
-        g.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 28));
-        g.drawString("Sound Settings", 300, 180);
+        g2.setColor(new Color(0, 0, 0, 205));
+        g2.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
+
+        int cardW = 420;
+        int cardH = 250;
+        int cardX = (AppConfig.WINDOW_WIDTH - cardW) / 2;
+        int cardY = 140;
+
+        drawOverlayCard(g2, cardX, cardY, cardW, cardH, UiStyle.CYAN);
+
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Monospaced", Font.BOLD, 28));
+        drawCentered(g2, "SOUND SETTINGS", AppConfig.WINDOW_WIDTH / 2, cardY + 42);
 
         SoundSettings settings = user.getSoundSettings();
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("1 - Background Music: " + onOff(settings.isBackgroundMusic()), 260, 230);
-        g.drawString("2 - Shot Sound: " + onOff(settings.isShotSound()), 260, 260);
-        g.drawString("3 - Explosion / Crash Sound: " + onOff(settings.isExplosionSound()), 260, 290);
-        g.drawString("4 - Game Over / Win Sound: " + onOff(settings.isEndSound()), 260, 320);
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 18));
+        g2.drawString("1 - Background Music: " + onOff(settings.isBackgroundMusic()), cardX + 36, cardY + 88);
+        g2.drawString("2 - Shot Sound:       " + onOff(settings.isShotSound()), cardX + 36, cardY + 118);
+        g2.drawString("3 - Explosion Sound:  " + onOff(settings.isExplosionSound()), cardX + 36, cardY + 148);
+        g2.drawString("4 - End Sound:        " + onOff(settings.isEndSound()), cardX + 36, cardY + 178);
 
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawString("Press M to close", 320, 370);
+        g2.setColor(UiStyle.MUTED);
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        drawCentered(g2, "Press M to close", AppConfig.WINDOW_WIDTH / 2, cardY + 220);
+        g2.dispose();
     }
 
     private String onOff(boolean value) {
@@ -343,38 +381,102 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawPause(Graphics g) {
-        g.setColor(new Color(0, 0, 0, 160));
-        g.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 42));
-        g.drawString("PAUSED", 310, 300);
+        g2.setColor(new Color(0, 0, 0, 175));
+        g2.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
+
+        drawOverlayCard(g2, 210, 200, 380, 150, UiStyle.CYAN);
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Monospaced", Font.BOLD, 42));
+        drawCentered(g2, "PAUSED", AppConfig.WINDOW_WIDTH / 2, 255);
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 16));
+        g2.setColor(UiStyle.MUTED);
+        drawCentered(g2, "Press P to continue", AppConfig.WINDOW_WIDTH / 2, 305);
+        g2.dispose();
     }
 
     private void drawGameOver(Graphics g) {
-        g.setColor(new Color(0, 0, 0, 180));
-        g.fillRect(0, 0, getWidth(), getHeight());
-
-        g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 46));
-        g.drawString("GAME OVER", 250, 280);
-
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("Score: " + scoreManager.getScore() + "   Press ESC to return to menu", 190, 320);
+        drawResultOverlay((Graphics2D) g, false);
     }
 
     private void drawWin(Graphics g) {
-        g.setColor(new Color(0, 0, 0, 180));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        drawResultOverlay((Graphics2D) g, true);
+    }
 
-        g.setColor(Color.GREEN);
-        g.setFont(new Font("Arial", Font.BOLD, 46));
-        g.drawString("YOU WIN!", 290, 280);
+    private void drawResultOverlay(Graphics2D g, boolean win) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("Score: " + scoreManager.getScore() + "   Press ESC to return to menu", 190, 320);
+        g2.setPaint(new GradientPaint(0, 0, new Color(0, 0, 0, 210), 0, getHeight(), new Color(8, 12, 20, 235)));
+        g2.fillRect(0, 0, getWidth(), getHeight());
+
+        Color accent = win ? UiStyle.SUCCESS : UiStyle.DANGER;
+        int cardW = 470;
+        int cardH = 280;
+        int cardX = (getWidth() - cardW) / 2;
+        int cardY = 155;
+        drawOverlayCard(g2, cardX, cardY, cardW, cardH, accent);
+
+        g2.setColor(accent);
+        g2.setFont(new Font("Monospaced", Font.BOLD, 40));
+        drawCentered(g2, win ? "VICTORY" : "GAME OVER", getWidth() / 2, cardY + 52);
+
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 16));
+        drawCentered(g2,
+            win ? "The galaxy is safe. Great job, pilot." : "Your ship was destroyed. Try again.",
+            getWidth() / 2,
+            cardY + 82
+        );
+
+        drawStatRow(g2, cardX + 50, cardY + 120, cardW - 100, "PLAYER", user.getUsername());
+        drawStatRow(g2, cardX + 50, cardY + 155, cardW - 100, "FINAL SCORE", String.valueOf(scoreManager.getScore()));
+        drawStatRow(g2, cardX + 50, cardY + 190, cardW - 100, "LEVEL REACHED", String.valueOf(levelManager.getCurrentLevel()));
+        drawStatRow(g2, cardX + 50, cardY + 225, cardW - 100, "BEST SCORE", String.valueOf(Math.max(user.getHighScore(), scoreManager.getScore())));
+
+        g2.setColor(new Color(230, 235, 245));
+        g2.setFont(new Font("Monospaced", Font.BOLD, 15));
+        drawCentered(g2, "ENTER / R  PLAY AGAIN", getWidth() / 2, cardY + 260);
+        g2.setColor(UiStyle.MUTED);
+        g2.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        drawCentered(g2, "ESC  MAIN MENU", getWidth() / 2, cardY + 282);
+
+        g2.dispose();
+    }
+
+    private void drawOverlayCard(Graphics2D g2, int x, int y, int w, int h, Color accent) {
+        g2.setColor(new Color(6, 10, 16, 235));
+        g2.fillRoundRect(x, y, w, h, 24, 24);
+
+        g2.setStroke(new BasicStroke(2.4f));
+        g2.setColor(new Color(225, 230, 238, 220));
+        g2.drawRoundRect(x, y, w, h, 24, 24);
+
+        g2.setColor(new Color(accent.getRed(), accent.getGreen(), accent.getBlue(), 170));
+        g2.drawRoundRect(x + 3, y + 3, w - 6, h - 6, 20, 20);
+
+        g2.setColor(new Color(accent.getRed(), accent.getGreen(), accent.getBlue(), 35));
+        g2.fillRoundRect(x + 10, y + 10, w - 20, 48, 16, 16);
+    }
+
+    private void drawStatRow(Graphics2D g2, int x, int y, int w, String label, String value) {
+        g2.setColor(new Color(255, 255, 255, 22));
+        g2.fillRoundRect(x, y - 18, w, 24, 10, 10);
+
+        g2.setColor(UiStyle.SILVER);
+        g2.setFont(new Font("Monospaced", Font.BOLD, 15));
+        g2.drawString(label, x + 12, y);
+
+        FontMetrics fm = g2.getFontMetrics();
+        g2.setColor(Color.WHITE);
+        g2.drawString(value, x + w - fm.stringWidth(value) - 12, y);
+    }
+
+    private void drawCentered(Graphics2D g2, String text, int centerX, int baselineY) {
+        FontMetrics fm = g2.getFontMetrics();
+        g2.drawString(text, centerX - fm.stringWidth(text) / 2, baselineY);
     }
 
     @Override
@@ -386,6 +488,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+
+        if (gameState == GameState.GAME_OVER || gameState == GameState.WIN) {
+            if (key == KeyEvent.VK_ENTER || key == KeyEvent.VK_R) {
+                app.startNewGame();
+                return;
+            }
+            if (key == KeyEvent.VK_ESCAPE) {
+                timer.stop();
+                app.showMainMenu();
+                return;
+            }
+        }
 
         if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) leftPressed = true;
         if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) rightPressed = true;

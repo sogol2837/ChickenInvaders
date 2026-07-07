@@ -1,45 +1,65 @@
 package chickenInvaders.ui;
 
+import chickenInvaders.AppConfig;
 import chickenInvaders.GameMain;
 import chickenInvaders.model.PlaneType;
 import chickenInvaders.model.User;
-import chickenInvaders.AppConfig;
 import chickenInvaders.util.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
 
-
 public class StorePanel extends JPanel {
 
     private final GameMain app;
     private final JPanel listPanel;
+    private final JLabel creditLabel;
 
     public StorePanel(GameMain app) {
         this.app = app;
 
         setLayout(new BorderLayout());
-        setBackground(new Color(20, 24, 35));
+        setOpaque(false);
 
-        JLabel titleLabel = new JLabel("Store", SwingConstants.CENTER);
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        JPanel background = UiStyle.createBackgroundPanel();
+        background.setBorder(BorderFactory.createEmptyBorder(22, 34, 24, 34));
+        add(background, BorderLayout.CENTER);
+
+        JPanel topPanel = new JPanel(new GridLayout(3, 1));
+        topPanel.setOpaque(false);
+        topPanel.add(UiStyle.title("SPACE STORE"));
+        topPanel.add(UiStyle.subtitle("use your high score as credits to equip a ship"));
+
+        creditLabel = UiStyle.subtitle("");
+        creditLabel.setForeground(UiStyle.WARNING);
+        creditLabel.setFont(new Font("Monospaced", Font.BOLD, 15));
+        topPanel.add(creditLabel);
 
         listPanel = new JPanel();
-        listPanel.setLayout(new GridLayout(PlaneType.values().length, 1, 10, 10));
+        listPanel.setLayout(new GridLayout(PlaneType.values().length, 1, 12, 12));
         listPanel.setOpaque(false);
-        listPanel.setBorder(BorderFactory.createEmptyBorder(20, 60, 20, 60));
+        listPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        JButton backButton = new JButton("Back");
+        JScrollPane scrollPane = UiStyle.scrollPane(listPanel);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(null);
+
+        JPanel listCard = UiStyle.card();
+        listCard.setLayout(new BorderLayout());
+        listCard.add(scrollPane, BorderLayout.CENTER);
+
+        JButton backButton = UiStyle.secondaryButton("BACK");
         backButton.addActionListener(e -> app.showMainMenu());
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setOpaque(false);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
         bottomPanel.add(backButton);
 
-        add(titleLabel, BorderLayout.NORTH);
-        add(new JScrollPane(listPanel), BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        background.add(topPanel, BorderLayout.NORTH);
+        background.add(listCard, BorderLayout.CENTER);
+        background.add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public void refresh() {
@@ -48,6 +68,12 @@ public class StorePanel extends JPanel {
         User user = app.getCurrentUser();
         int highScore = (user == null) ? 0 : user.getHighScore();
         PlaneType current = (user == null) ? PlaneType.DEFAULT : user.getSelectedPlane();
+
+        if (user == null) {
+            creditLabel.setText("LOGIN REQUIRED  |  CREDITS: 0");
+        } else {
+            creditLabel.setText("PILOT: " + user.getUsername() + "  |  CREDITS: " + highScore + "  |  EQUIPPED: " + current.name());
+        }
 
         for (PlaneType type : PlaneType.values()) {
             listPanel.add(buildRow(type, highScore, current, user));
@@ -58,56 +84,86 @@ public class StorePanel extends JPanel {
     }
 
     private JPanel buildRow(PlaneType type, int highScore, PlaneType current, User user) {
-        JPanel row = new JPanel(new BorderLayout());
-        row.setBackground(new Color(35, 40, 55));
-        row.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        JPanel row = UiStyle.card();
+        row.setLayout(new BorderLayout(16, 0));
+        row.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(type == current ? UiStyle.CYAN : new Color(150, 160, 170), type == current ? 3 : 1),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)
+        ));
 
-        String special = type.hasDoubleBossDamage() ? "  |  2x damage to bosses" : "";
-        String info = String.format(
-            "<html><b>%s</b> &nbsp; cost %d &nbsp; | &nbsp; speed %d &nbsp; | &nbsp; fire rate %dms &nbsp; | &nbsp; lives %d%s</html>",
-            type.name(), type.getCost(), type.getSpeed(), type.getFireDelayMs(), type.getStartingLives(), special
+        JLabel imageLabel = buildPlaneImage(type);
+
+        JPanel infoPanel = new JPanel(new GridLayout(3, 1, 2, 2));
+        infoPanel.setOpaque(false);
+
+        JLabel nameLabel = new JLabel(type.name());
+        nameLabel.setForeground(type == current ? UiStyle.CYAN : Color.WHITE);
+        nameLabel.setFont(new Font("Monospaced", Font.BOLD, 19));
+
+        String special = type.hasDoubleBossDamage() ? "  |  SPECIAL: 2x boss damage" : "";
+        JLabel statsLabel = new JLabel(
+            "Cost " + type.getCost() +
+                "  |  Speed " + type.getSpeed() +
+                "  |  Fire " + type.getFireDelayMs() + "ms" +
+                "  |  Lives " + type.getStartingLives()
         );
+        statsLabel.setForeground(UiStyle.SILVER);
+        statsLabel.setFont(new Font("Monospaced", Font.PLAIN, 13));
 
-        JLabel label = new JLabel(info);
-        label.setForeground(Color.WHITE);
+        JLabel specialLabel = new JLabel(special.isEmpty() ? "Balanced ship configuration" : special.trim());
+        specialLabel.setForeground(type.hasDoubleBossDamage() ? UiStyle.WARNING : UiStyle.MUTED);
+        specialLabel.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
-        JButton actionButton = new JButton();
+        infoPanel.add(nameLabel);
+        infoPanel.add(statsLabel);
+        infoPanel.add(specialLabel);
+
+        JButton actionButton;
         boolean isCurrent = type == current;
         boolean canAfford = highScore >= type.getCost();
 
         if (isCurrent) {
-            actionButton.setText("Equipped");
+            actionButton = UiStyle.secondaryButton("EQUIPPED");
             actionButton.setEnabled(false);
+        } else if (user == null) {
+            actionButton = UiStyle.secondaryButton("LOGIN");
+            actionButton.addActionListener(e -> app.showLogin());
         } else if (!canAfford) {
-            actionButton.setText("Locked");
+            actionButton = UiStyle.secondaryButton("LOCKED");
             actionButton.setEnabled(false);
         } else {
-            actionButton.setText("Select");
+            actionButton = UiStyle.primaryButton("SELECT");
             actionButton.addActionListener(e -> selectPlane(type, user));
         }
 
-        JLabel imageLabel = buildPlaneImage(type);
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false);
+        actionButton.setPreferredSize(new Dimension(120, 42));
+        buttonPanel.add(actionButton);
 
         row.add(imageLabel, BorderLayout.WEST);
-        row.add(label, BorderLayout.CENTER);
-        row.add(actionButton, BorderLayout.EAST);
+        row.add(infoPanel, BorderLayout.CENTER);
+        row.add(buttonPanel, BorderLayout.EAST);
 
         return row;
     }
 
-
     private JLabel buildPlaneImage(PlaneType type) {
         JLabel imageLabel = new JLabel();
-        imageLabel.setPreferredSize(new Dimension(120, 100));
+        imageLabel.setPreferredSize(new Dimension(110, 80));
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setBorder(BorderFactory.createLineBorder(new Color(80, 95, 105), 1));
+        imageLabel.setOpaque(true);
+        imageLabel.setBackground(new Color(3, 5, 10));
 
         Image image = ImageLoader.load(AppConfig.IMAGE_DIR + imageNameFor(type));
 
         if (image != null) {
-            Image scaledImage = image.getScaledInstance(100, 85, Image.SCALE_SMOOTH);
+            Image scaledImage = image.getScaledInstance(86, 68, Image.SCALE_SMOOTH);
             imageLabel.setIcon(new ImageIcon(scaledImage));
         } else {
             imageLabel.setForeground(Color.WHITE);
+            imageLabel.setFont(new Font("Monospaced", Font.BOLD, 11));
             imageLabel.setText(type.name());
         }
 

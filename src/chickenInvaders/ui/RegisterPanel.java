@@ -16,48 +16,64 @@ public class RegisterPanel extends JPanel {
         this.app = app;
 
         setLayout(new BorderLayout());
-        setBackground(new Color(25, 30, 45));
+        setOpaque(false);
 
-        JLabel titleLabel = new JLabel("Register", SwingConstants.CENTER);
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        JPanel background = UiStyle.createBackgroundPanel();
+        background.setBorder(BorderFactory.createEmptyBorder(22, 40, 30, 40));
+        add(background, BorderLayout.CENTER);
 
-        JPanel formPanel = new JPanel(new GridLayout(3, 1, 8, 8));
-        formPanel.setOpaque(false);
-        formPanel.setBorder(BorderFactory.createEmptyBorder(100, 250, 100, 250));
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        topPanel.setOpaque(false);
+        topPanel.add(UiStyle.title("CREATE PILOT"));
+        topPanel.add(UiStyle.subtitle("register a new commander profile"));
+
+        JPanel card = UiStyle.card();
+        card.setLayout(new GridBagLayout());
+        card.setPreferredSize(new Dimension(420, 270));
 
         usernameField = new JTextField();
         passwordField = new JPasswordField();
+        UiStyle.styleTextField(usernameField);
+        UiStyle.styleTextField(passwordField);
 
-        JButton registerButton = new JButton("Register");
-        JButton backButton = new JButton("Back");
+        JButton registerButton = UiStyle.primaryButton("REGISTER");
+        JButton backButton = UiStyle.secondaryButton("BACK TO LOGIN");
 
-        formPanel.add(labeled("Username", usernameField));
-        formPanel.add(labeled("Password", passwordField));
-        formPanel.add(registerButton);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.insets = new Insets(5, 5, 8, 5);
+        card.add(labeled("USERNAME", usernameField), gbc);
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setOpaque(false);
-        bottomPanel.add(backButton);
+        gbc.gridy++;
+        card.add(labeled("PASSWORD", passwordField), gbc);
+
+        gbc.gridy++;
+        gbc.insets = new Insets(16, 5, 6, 5);
+        card.add(registerButton, gbc);
+
+        gbc.gridy++;
+        gbc.insets = new Insets(6, 5, 6, 5);
+        card.add(backButton, gbc);
+
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setOpaque(false);
+        center.add(card);
 
         registerButton.addActionListener(e -> register());
         backButton.addActionListener(e -> app.showLogin());
 
-        add(titleLabel, BorderLayout.NORTH);
-        add(formPanel, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        background.add(topPanel, BorderLayout.NORTH);
+        background.add(center, BorderLayout.CENTER);
     }
 
     private JPanel labeled(String text, JComponent field) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
-
-        JLabel label = new JLabel(text);
-        label.setForeground(Color.WHITE);
-
-        panel.add(label, BorderLayout.NORTH);
+        panel.add(UiStyle.fieldLabel(text), BorderLayout.NORTH);
         panel.add(field, BorderLayout.CENTER);
-
         return panel;
     }
 

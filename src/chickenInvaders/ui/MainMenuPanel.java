@@ -15,40 +15,54 @@ public class MainMenuPanel extends JPanel {
         this.app = app;
 
         setLayout(new BorderLayout());
-        setBackground(new Color(20, 24, 35));
+        setOpaque(false);
 
-        JLabel titleLabel = new JLabel("Chicken Invaders", SwingConstants.CENTER);
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 38));
+        JPanel background = UiStyle.createBackgroundPanel();
+        background.setBorder(BorderFactory.createEmptyBorder(18, 28, 24, 28));
+        add(background, BorderLayout.CENTER);
 
-        userLabel = new JLabel("", SwingConstants.CENTER);
-        userLabel.setForeground(Color.LIGHT_GRAY);
-        userLabel.setFont(new Font("Arial", Font.PLAIN, 15));
-
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new JPanel(new GridLayout(3, 1, 0, 2));
         topPanel.setOpaque(false);
+
+        JLabel titleLabel = UiStyle.title("STARWARS INVADERS");
+        JLabel subtitleLabel = UiStyle.subtitle("RETRO SPACE SHOOTER  |  AP FINAL PROJECT");
+        userLabel = UiStyle.subtitle("");
+        userLabel.setForeground(UiStyle.CYAN);
+        userLabel.setFont(new Font("Monospaced", Font.BOLD, 14));
+
         topPanel.add(titleLabel);
+        topPanel.add(subtitleLabel);
         topPanel.add(userLabel);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(7, 1, 10, 10));
-        buttonPanel.setOpaque(false);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 250, 40, 250));
+        JPanel menuCard = UiStyle.card();
+        menuCard.setLayout(new GridLayout(7, 1, 10, 10));
 
-        JButton newGameButton = new JButton("New Game");
-        JButton highScoresButton = new JButton("High Scores");
-        JButton settingsButton = new JButton("Settings");
-        JButton howToPlayButton = new JButton("How To Play");
-        JButton storeButton = new JButton("Store");
-        JButton loginButton = new JButton("Login / Register");
-        JButton exitButton = new JButton("Exit");
+        JButton newGameButton = UiStyle.primaryButton("▶ NEW GAME");
+        JButton highScoresButton = UiStyle.secondaryButton("★ HIGH SCORES");
+        JButton settingsButton = UiStyle.secondaryButton("⚙ SETTINGS");
+        JButton howToPlayButton = UiStyle.secondaryButton("? HOW TO PLAY");
+        JButton storeButton = UiStyle.secondaryButton("▣ STORE");
+        JButton loginButton = UiStyle.secondaryButton("☻ LOGIN / REGISTER");
+        JButton exitButton = UiStyle.secondaryButton("✕ EXIT");
 
-        buttonPanel.add(newGameButton);
-        buttonPanel.add(highScoresButton);
-        buttonPanel.add(settingsButton);
-        buttonPanel.add(howToPlayButton);
-        buttonPanel.add(storeButton);
-        buttonPanel.add(loginButton);
-        buttonPanel.add(exitButton);
+        menuCard.add(newGameButton);
+        menuCard.add(highScoresButton);
+        menuCard.add(settingsButton);
+        menuCard.add(howToPlayButton);
+        menuCard.add(storeButton);
+        menuCard.add(loginButton);
+        menuCard.add(exitButton);
+
+        JPanel centerWrapper = new JPanel(new GridBagLayout());
+        centerWrapper.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        menuCard.setPreferredSize(new Dimension(330, 390));
+        centerWrapper.add(menuCard, gbc);
 
         newGameButton.addActionListener(e -> app.startNewGame());
         highScoresButton.addActionListener(e -> app.showHighScores());
@@ -58,8 +72,8 @@ public class MainMenuPanel extends JPanel {
         loginButton.addActionListener(e -> app.showLogin());
         exitButton.addActionListener(e -> app.exitGame());
 
-        add(topPanel, BorderLayout.NORTH);
-        add(buttonPanel, BorderLayout.CENTER);
+        background.add(topPanel, BorderLayout.NORTH);
+        background.add(centerWrapper, BorderLayout.CENTER);
 
         refreshUserLabel();
     }
@@ -68,9 +82,9 @@ public class MainMenuPanel extends JPanel {
         User user = app.getCurrentUser();
 
         if (user == null) {
-            userLabel.setText("not logged in.");
+            userLabel.setText("STATUS: NOT LOGGED IN");
         } else {
-            userLabel.setText("logged in as: " + user.getUsername());
+            userLabel.setText("PILOT: " + user.getUsername() + "  |  HIGH SCORE: " + user.getHighScore());
         }
     }
 }

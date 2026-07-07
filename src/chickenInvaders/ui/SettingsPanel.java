@@ -19,11 +19,16 @@ public class SettingsPanel extends JPanel {
         this.app = app;
 
         setLayout(new BorderLayout());
-        setBackground(new Color(25, 30, 45));
+        setOpaque(false);
 
-        JLabel titleLabel = new JLabel("Sound Settings", SwingConstants.CENTER);
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+        JPanel background = UiStyle.createBackgroundPanel();
+        background.setBorder(BorderFactory.createEmptyBorder(22, 40, 30, 40));
+        add(background, BorderLayout.CENTER);
+
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        topPanel.setOpaque(false);
+        topPanel.add(UiStyle.title("SOUND SETTINGS"));
+        topPanel.add(UiStyle.subtitle("toggle each audio channel separately"));
 
         backgroundMusicBox = new JCheckBox("Background Music");
         shotSoundBox = new JCheckBox("Shot Sound");
@@ -37,31 +42,34 @@ public class SettingsPanel extends JPanel {
             endSoundBox
         };
 
-        JPanel centerPanel = new JPanel(new GridLayout(4, 1, 10, 10));
-        centerPanel.setOpaque(false);
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(100, 250, 100, 250));
+        JPanel card = UiStyle.card();
+        card.setLayout(new GridLayout(6, 1, 10, 10));
+        card.setPreferredSize(new Dimension(440, 340));
 
         for (JCheckBox box : boxes) {
             box.setOpaque(false);
             box.setForeground(Color.WHITE);
-            box.setFont(new Font("Arial", Font.PLAIN, 16));
-            centerPanel.add(box);
+            box.setFont(new Font("Monospaced", Font.BOLD, 16));
+            box.setFocusPainted(false);
+            box.setIconTextGap(12);
+            card.add(box);
         }
 
-        JButton saveButton = new JButton("Save");
-        JButton backButton = new JButton("Back");
+        JButton saveButton = UiStyle.primaryButton("SAVE SETTINGS");
+        JButton backButton = UiStyle.secondaryButton("BACK");
+
+        card.add(saveButton);
+        card.add(backButton);
+
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setOpaque(false);
+        center.add(card);
 
         saveButton.addActionListener(e -> saveSettings());
         backButton.addActionListener(e -> app.showMainMenu());
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setOpaque(false);
-        bottomPanel.add(saveButton);
-        bottomPanel.add(backButton);
-
-        add(titleLabel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        background.add(topPanel, BorderLayout.NORTH);
+        background.add(center, BorderLayout.CENTER);
     }
 
     public void loadCurrentSettings() {
