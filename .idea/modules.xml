@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ChickenInvaders.iml" filepath="$PROJECT_DIR$/.idea/ChickenInvaders.iml" />
-      <module fileurl="file://$PROJECT_DIR$/chickenInvaders/chickenInvaders.iml" filepath="$PROJECT_DIR$/chickenInvaders/chickenInvaders.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chickenInvaders_bugfix.iml" filepath="$PROJECT_DIR$/chickenInvaders_bugfix.iml" />
     </modules>
   </component>
 </project>
