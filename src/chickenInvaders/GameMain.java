@@ -49,7 +49,7 @@ public class GameMain extends JFrame {
         rootPanel.add(howToPlayPanel, "howToPlay");
         rootPanel.add(storePanel, "store");
 
-        setTitle("Chicken Invaders");
+        setTitle("StarWars Invaders");
         setSize(AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

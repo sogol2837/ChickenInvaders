@@ -3,6 +3,8 @@ package chickenInvaders.ui;
 import chickenInvaders.GameMain;
 import chickenInvaders.model.PlaneType;
 import chickenInvaders.model.User;
+import chickenInvaders.AppConfig;
+import chickenInvaders.util.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,10 +86,41 @@ public class StorePanel extends JPanel {
             actionButton.addActionListener(e -> selectPlane(type, user));
         }
 
+        JLabel imageLabel = buildPlaneImage(type);
+
+        row.add(imageLabel, BorderLayout.WEST);
         row.add(label, BorderLayout.CENTER);
         row.add(actionButton, BorderLayout.EAST);
 
         return row;
+    }
+
+
+    private JLabel buildPlaneImage(PlaneType type) {
+        JLabel imageLabel = new JLabel();
+        imageLabel.setPreferredSize(new Dimension(120, 100));
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        Image image = ImageLoader.load(AppConfig.IMAGE_DIR + imageNameFor(type));
+
+        if (image != null) {
+            Image scaledImage = image.getScaledInstance(100, 85, Image.SCALE_SMOOTH);
+            imageLabel.setIcon(new ImageIcon(scaledImage));
+        } else {
+            imageLabel.setForeground(Color.WHITE);
+            imageLabel.setText(type.name());
+        }
+
+        return imageLabel;
+    }
+
+    private String imageNameFor(PlaneType type) {
+        return switch (type) {
+            case DEFAULT -> "mainPlane.png";
+            case FAST -> "plane2.png";
+            case HEAVY -> "plane3.png";
+            case SNIPER -> "plane4.png";
+        };
     }
 
     private void selectPlane(PlaneType type, User user) {
