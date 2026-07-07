@@ -6,7 +6,7 @@ import java.awt.Graphics;
 public class FastEnemy extends Enemy {
 
     public FastEnemy(int x, int y, int level) {
-        super(x, y, 38, 30, healthForLevel(level), 15);
+        super(x, y, 60, 50, healthForLevel(level), 15);
     }
 
     private static int healthForLevel(int level) {
@@ -15,7 +15,7 @@ public class FastEnemy extends Enemy {
 
     @Override
     public int getArrivalSpeed() {
-        return 10; // twice the base homing speed while flying back into formation
+        return 10;
     }
 
     @Override
@@ -24,6 +24,10 @@ public class FastEnemy extends Enemy {
 
     @Override
     public void draw(Graphics g) {
+        if (drawSprite(g, "fastEnemy.png")) {
+            return;
+        }
+
         g.setColor(new Color(0xE5E4E2));
         g.fillOval(x, y, width, height);
 

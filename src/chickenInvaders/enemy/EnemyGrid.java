@@ -150,8 +150,16 @@ public class EnemyGrid {
                 continue;
             }
             Enemy enemy = cell.getOccupant();
-            enemy.setX((int) Math.round(cell.getHomeX() + shiftX));
-            enemy.setY((int) Math.round(cell.getHomeY() + shiftY));
+            double x = cell.getHomeX() + shiftX;
+            double y = cell.getHomeY() + shiftY;
+
+            if (enemy instanceof ZigzagEnemy) {
+                cell.advanceWobble();
+                x += Math.sin(cell.getWobblePhase()) * 12;
+            }
+
+            enemy.setX((int) Math.round(x));
+            enemy.setY((int) Math.round(y));
         }
     }
 

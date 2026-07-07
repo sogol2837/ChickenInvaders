@@ -6,7 +6,7 @@ import java.awt.Graphics;
 public class ZigzagEnemy extends Enemy {
 
     public ZigzagEnemy(int x, int y, int level) {
-        super(x, y, 42, 34, healthForLevel(level), 20);
+        super(x, y, 60, 50, healthForLevel(level), 20);
     }
 
     private static int healthForLevel(int level) {
@@ -29,6 +29,10 @@ public class ZigzagEnemy extends Enemy {
 
     @Override
     public void draw(Graphics g) {
+        if (drawSprite(g, "zigzagEnemy.png")) {
+            return;
+        }
+
         g.setColor(new Color(0xCC8899));
         g.fillOval(x, y, width, height);
 

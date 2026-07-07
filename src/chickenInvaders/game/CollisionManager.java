@@ -146,7 +146,7 @@ public class CollisionManager {
     private void maybeDropPowerUp(Enemy enemy, List<PowerUp> powerUps) {
         if (RandomUtils.chance(POWER_UP_DROP_CHANCE)) {
             PowerUpType type = RandomUtils.pick(PowerUpType.values());
-            powerUps.add(new PowerUp(centerX(enemy) - 11, centerY(enemy) - 11, type));
+            powerUps.add(new PowerUp(centerX(enemy), centerY(enemy), type));
         }
     }
 

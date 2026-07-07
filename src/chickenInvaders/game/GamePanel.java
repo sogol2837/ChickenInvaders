@@ -17,7 +17,9 @@ import chickenInvaders.model.GameRecord;
 import chickenInvaders.model.PowerUpType;
 import chickenInvaders.model.SoundSettings;
 import chickenInvaders.model.User;
+import chickenInvaders.util.ImageLoader;
 
+import java.awt.Image;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
@@ -62,6 +64,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean rightPressed;
     private boolean upPressed;
     private boolean downPressed;
+
+    private final Image backgroundImage = ImageLoader.load(AppConfig.IMAGE_DIR + "background.png");
 
     public GamePanel(GameMain app, User user) {
         this.app = app;
@@ -241,6 +245,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT, null);
+        }
 
         if (levelManager.isBossLevel()) {
             if (boss != null) {

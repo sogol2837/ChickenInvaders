@@ -8,7 +8,7 @@ public class Bullet extends GameObject {
     private boolean active;
 
     public Bullet(int x, int y) {
-        super(x, y, 6, 14);
+        super(x, y, 19, 25);
         this.speed = 9;
         this.active = true;
     }
@@ -23,6 +23,10 @@ public class Bullet extends GameObject {
 
     @Override
     public void draw(Graphics g) {
+        if (drawSprite(g, "shottt.png")) {
+            return;
+        }
+
         g.setColor(Color.YELLOW);
         g.fillOval(x, y, width, height);
     }

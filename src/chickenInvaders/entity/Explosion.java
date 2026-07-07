@@ -1,5 +1,9 @@
 package chickenInvaders.entity;
 
+import chickenInvaders.AppConfig;
+import chickenInvaders.util.ImageLoader;
+
+import java.awt.Image;
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -30,6 +34,13 @@ public class Explosion extends GameObject {
         int size = (int) (width * (0.4 + 0.6 * progress));
         int alpha = Math.max(0, (int) (255 * (1 - progress)));
         int offset = (width - size) / 2;
+
+        Image image = ImageLoader.load(AppConfig.IMAGE_DIR + "explosion.png");
+
+        if (image != null) {
+            g.drawImage(image, x + offset, y + offset, size, size, null);
+            return;
+        }
 
         g.setColor(new Color(255, 165, 0, alpha));
         g.fillOval(x + offset, y + offset, size, size);

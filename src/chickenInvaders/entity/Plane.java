@@ -35,7 +35,7 @@ public class Plane extends GameObject {
     }
 
     public Plane(int x, int y, PlaneType planeType) {
-        super(x, y, 44, 44);
+        super(x, y, 80, 100);
         this.planeType = planeType;
         this.speed = planeType.getSpeed();
         this.lives = planeType.getStartingLives();
@@ -115,6 +115,10 @@ public class Plane extends GameObject {
             g.fillOval(x - 10, y - 10, width + 20, height + 20);
             g.setColor(Color.CYAN);
             g.drawOval(x - 10, y - 10, width + 20, height + 20);
+        }
+
+        if (drawSprite(g, planeImageName())) {
+            return;
         }
 
         g.setColor(bodyColor());
@@ -197,5 +201,14 @@ public class Plane extends GameObject {
 
     public long getRapidFireSecondsLeft() {
         return Math.max(0, (rapidFireUntil - System.currentTimeMillis()) / 1000 + 1);
+    }
+
+    private String planeImageName() {
+        return switch (planeType) {
+            case DEFAULT -> "mainPlane.png";
+            case FAST -> "plane2.png";
+            case HEAVY -> "plane3.png";
+            case SNIPER -> "plane4.png";
+        };
     }
 }

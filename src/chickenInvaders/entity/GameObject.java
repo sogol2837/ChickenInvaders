@@ -1,7 +1,11 @@
 package chickenInvaders.entity;
 
+import chickenInvaders.AppConfig;
+import chickenInvaders.util.ImageLoader;
+
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Image;
 
 public abstract class GameObject {
     protected int x;
@@ -50,5 +54,18 @@ public abstract class GameObject {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+
+    //add images
+    protected boolean drawSprite(Graphics g, String fileName) {
+        Image image = ImageLoader.load(AppConfig.IMAGE_DIR + fileName);
+
+        if (image == null) {
+            return false;
+        }
+
+        g.drawImage(image, x, y, width, height, null);
+        return true;
     }
 }

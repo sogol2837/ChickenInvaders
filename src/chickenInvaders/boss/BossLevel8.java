@@ -9,8 +9,8 @@ import java.awt.Graphics;
 
 public class BossLevel8 extends Boss {
 
-    private static final int WIDTH = 160;
-    private static final int HEIGHT = 130;
+    private static final int WIDTH = 250;
+    private static final int HEIGHT = 200;
     private static final double MAX_H_SPEED = 2.0;
     private static final double V_RANGE = 100;
     private static final double EGG_SPEED = 5;
@@ -65,6 +65,11 @@ public class BossLevel8 extends Boss {
 
     @Override
     protected void drawBody(Graphics g) {
+
+        if (drawSprite(g, "boss8.png")) {
+            return;
+        }
+
         g.setColor(new Color(0x4B0082));
         g.fillOval(x, y, width, height);
 

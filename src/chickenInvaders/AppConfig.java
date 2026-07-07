@@ -10,6 +10,7 @@ public class AppConfig {
     public static final String SCORES_FILE = "data/scores.txt";
 
     public static final String SOUND_DIR = "assets/sounds/";
+    public static final String IMAGE_DIR = "assets/images/";
 
     private AppConfig() {
     }

@@ -19,7 +19,7 @@ public class Egg extends GameObject {
     }
 
     private Egg(int x, int y, double vx, double vy) {
-        super(x, y, 10, 14);
+        super(x, y, 24, 27);
         this.vx = vx;
         this.vy = vy;
     }
@@ -57,6 +57,10 @@ public class Egg extends GameObject {
 
     @Override
     public void draw(Graphics g) {
+        if (drawSprite(g, "eggs.png")) {
+            return;
+        }
+
         g.setColor(Color.WHITE);
         g.fillOval(x, y, width, height);
         g.setColor(Color.BLACK);

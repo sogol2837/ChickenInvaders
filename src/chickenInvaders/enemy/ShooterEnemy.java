@@ -6,7 +6,7 @@ import java.awt.Graphics;
 public class ShooterEnemy extends Enemy {
 
     public ShooterEnemy(int x, int y, int level) {
-        super(x, y, 44, 36, healthForLevel(level), 25);
+        super(x, y, 60, 50, healthForLevel(level), 25);
     }
 
     private static int healthForLevel(int level) {
@@ -24,6 +24,10 @@ public class ShooterEnemy extends Enemy {
 
     @Override
     public void draw(Graphics g) {
+        if (drawSprite(g, "shooterEnemy.png")) {
+            return;
+        }
+
         g.setColor(new Color(0xE3F988));
         g.fillOval(x, y, width, height);
 
