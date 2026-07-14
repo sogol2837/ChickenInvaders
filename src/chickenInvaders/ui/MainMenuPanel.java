@@ -25,7 +25,7 @@ public class MainMenuPanel extends JPanel {
         topPanel.setOpaque(false);
 
         JLabel titleLabel = UiStyle.title("STARWARS INVADERS");
-        JLabel subtitleLabel = UiStyle.subtitle("RETRO SPACE SHOOTER  |  AP FINAL PROJECT");
+        JLabel subtitleLabel = UiStyle.subtitle("RETRO SPACE SHOOTER");
         userLabel = UiStyle.subtitle("");
         userLabel.setForeground(UiStyle.CYAN);
         userLabel.setFont(new Font("Monospaced", Font.BOLD, 14));
@@ -37,13 +37,13 @@ public class MainMenuPanel extends JPanel {
         JPanel menuCard = UiStyle.card();
         menuCard.setLayout(new GridLayout(7, 1, 10, 10));
 
-        JButton newGameButton = UiStyle.primaryButton("▶ NEW GAME");
+        JButton newGameButton = UiStyle.primaryButton("NEW GAME");
         JButton highScoresButton = UiStyle.secondaryButton("★ HIGH SCORES");
-        JButton settingsButton = UiStyle.secondaryButton("⚙ SETTINGS");
+        JButton settingsButton = UiStyle.secondaryButton("SETTINGS");
         JButton howToPlayButton = UiStyle.secondaryButton("? HOW TO PLAY");
-        JButton storeButton = UiStyle.secondaryButton("▣ STORE");
-        JButton loginButton = UiStyle.secondaryButton("☻ LOGIN / REGISTER");
-        JButton exitButton = UiStyle.secondaryButton("✕ EXIT");
+        JButton storeButton = UiStyle.secondaryButton("STORE");
+        JButton loginButton = UiStyle.secondaryButton("LOGIN / REGISTER");
+        JButton exitButton = UiStyle.secondaryButton("EXIT");
 
         menuCard.add(newGameButton);
         menuCard.add(highScoresButton);

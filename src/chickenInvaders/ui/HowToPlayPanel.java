@@ -41,7 +41,7 @@ public class HowToPlayPanel extends JPanel {
                 "Back to Menu   : ESC\n\n" +
                 "MISSION\n" +
                 "────────────────────────────────────────\n" +
-                "Destroy all chickens, collect power-ups, survive all 8 levels, " +
+                "Destroy all the empire's ships, collect power-ups, survive all 8 levels, " +
                 "defeat both bosses, and finish the galaxy mission."
         );
 
