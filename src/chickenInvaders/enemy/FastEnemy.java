@@ -15,7 +15,7 @@ public class FastEnemy extends Enemy {
 
     @Override
     public int getArrivalSpeed() {
-        return 10;
+        return 14;
     }
 
     @Override

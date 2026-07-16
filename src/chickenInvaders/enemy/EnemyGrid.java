@@ -63,7 +63,22 @@ public class EnemyGrid {
                 EnemyType kind = typeFor(level, row, col);
 
                 EnemyCell cell = new EnemyCell(row, col, kind, homeX, homeY, startingLives);
-                cell.setOccupant(createEnemy(kind, homeX, homeY, level));
+
+                if (kind == EnemyType.FAST) {
+                    int spawnX;
+                    if (RandomUtils.coinFlip()) {
+                        spawnX = -MAX_ENEMY_WIDTH;
+                    }
+                    else {
+                        spawnX = AppConfig.WINDOW_WIDTH;
+                    }
+                    Enemy enemy = createEnemy(kind, spawnX, homeY, level);
+                    cell.setOccupant(enemy);
+                    cell.setArriving(true);
+                }
+                else {
+                    cell.setOccupant(createEnemy(kind, homeX, homeY, level));
+                }
                 cells[row * COLS + col] = cell;
             }
         }

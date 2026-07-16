@@ -42,7 +42,14 @@ public class HowToPlayPanel extends JPanel {
                 "MISSION\n" +
                 "────────────────────────────────────────\n" +
                 "Destroy all the empire's ships, collect power-ups, survive all 8 levels, " +
-                "defeat both bosses, and finish the galaxy mission."
+                "defeat both bosses, and finish the galaxy mission." +
+                "────────────────────────────────────────\n\n" +
+                "don't forget to ACHIVE\n\n" +
+                " BB8    to be your SHIELD!\n" +
+                " R2D2   to FREEZE whole galaxy for you!\n" +
+                " WALL-E to EXPAND your lasers!\n" +
+                " BAYMAX to HEAL your wounds (physically and emotionally)!\n" +
+                " BEEMO  to BOOST your lasers!\n"
         );
 
         JScrollPane scrollPane = UiStyle.scrollPane(textArea);
