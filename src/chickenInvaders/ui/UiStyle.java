@@ -1,5 +1,8 @@
 package chickenInvaders.ui;
 
+import chickenInvaders.AppConfig;
+import chickenInvaders.util.ImageLoader;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
@@ -24,10 +27,24 @@ public final class UiStyle {
     private UiStyle() {
     }
 
-    public static SpacePanel createBackgroundPanel() {
-        SpacePanel panel = new SpacePanel();
-        panel.setLayout(new BorderLayout());
-        return panel;
+    public static JPanel createBackgroundPanel() {
+        return new JPanel() {
+
+            private final Image backgroundImage =
+                ImageLoader.load(AppConfig.IMAGE_DIR + "outside_bg.png");
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+                } else {
+                    g.setColor(new Color(0, 10, 25));
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                }
+            }
+        };
     }
 
     public static JLabel title(String text) {
