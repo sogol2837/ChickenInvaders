@@ -24,13 +24,25 @@ public class HighScore extends JPanel {
         setOpaque(false);
 
         JPanel background = UiStyle.createBackgroundPanel();
-        background.setBorder(BorderFactory.createEmptyBorder(22, 40, 30, 40));
+        background.setLayout(new BorderLayout(0, 10));
+        background.setBorder(BorderFactory.createEmptyBorder(8, 40, 14, 40));
         add(background, BorderLayout.CENTER);
 
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new JPanel();
         topPanel.setOpaque(false);
-        topPanel.add(UiStyle.title("HIGH SCORES"));
-        topPanel.add(UiStyle.subtitle("best saved record for each pilot"));
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setPreferredSize(new Dimension(1, 135));
+
+        JLabel titleLabel = UiStyle.title("HIGH SCORES");
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 6, 20));
+
+        JLabel subtitleLabel = UiStyle.subtitle("best saved record for each pilot");
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        topPanel.add(titleLabel);
+        topPanel.add(Box.createVerticalStrut(10));
+        topPanel.add(subtitleLabel);
 
         tableModel = new DefaultTableModel(
             new Object[]{"Pilot", "Score", "Level", "Date"},
@@ -49,18 +61,24 @@ public class HighScore extends JPanel {
 
         JPanel tableCard = UiStyle.card();
         tableCard.setLayout(new BorderLayout());
+        tableCard.setPreferredSize(new Dimension(620, 300));
         tableCard.add(scrollPane, BorderLayout.CENTER);
 
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setOpaque(false);
+        center.add(tableCard);
+
         JButton backButton = UiStyle.secondaryButton("BACK");
+        backButton.setPreferredSize(new Dimension(130, 44));
         backButton.addActionListener(e -> app.showMainMenu());
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setOpaque(false);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(14, 0, 0, 0));
+        bottomPanel.setPreferredSize(new Dimension(1, 56));
         bottomPanel.add(backButton);
 
         background.add(topPanel, BorderLayout.NORTH);
-        background.add(tableCard, BorderLayout.CENTER);
+        background.add(center, BorderLayout.CENTER);
         background.add(bottomPanel, BorderLayout.SOUTH);
     }
 
@@ -73,6 +91,7 @@ public class HighScore extends JPanel {
         table.setRowHeight(32);
         table.setFont(new Font("Monospaced", Font.PLAIN, 14));
         table.setShowVerticalLines(false);
+        table.setFillsViewportHeight(true);
 
         JTableHeader header = table.getTableHeader();
         header.setBackground(new Color(18, 28, 40));

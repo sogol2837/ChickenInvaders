@@ -18,7 +18,8 @@ public class MainMenuPanel extends JPanel {
         setOpaque(false);
 
         JPanel background = UiStyle.createBackgroundPanel();
-        background.setBorder(BorderFactory.createEmptyBorder(18, 28, 24, 28));
+        background.setLayout(new BorderLayout(0, 10));
+        background.setBorder(BorderFactory.createEmptyBorder(10, 28, 16, 28));
         add(background, BorderLayout.CENTER);
 
         JPanel topPanel = new JPanel(new GridLayout(3, 1, 0, 2));
@@ -35,7 +36,7 @@ public class MainMenuPanel extends JPanel {
         topPanel.add(userLabel);
 
         JPanel menuCard = UiStyle.card();
-        menuCard.setLayout(new GridLayout(7, 1, 10, 10));
+        menuCard.setLayout(new GridLayout(7, 1, 0, 7));
 
         JButton newGameButton = UiStyle.primaryButton("NEW GAME");
         JButton highScoresButton = UiStyle.secondaryButton("★ HIGH SCORES");
@@ -61,7 +62,7 @@ public class MainMenuPanel extends JPanel {
         gbc.weightx = 1;
         gbc.weighty = 1;
         gbc.fill = GridBagConstraints.NONE;
-        menuCard.setPreferredSize(new Dimension(330, 390));
+        menuCard.setPreferredSize(new Dimension(330, 345));
         centerWrapper.add(menuCard, gbc);
 
         newGameButton.addActionListener(e -> app.startNewGame());

@@ -18,17 +18,18 @@ public final class UiStyle {
     public static final Color CARD_LIGHT = new Color(22, 28, 42, 230);
     public static final Color SILVER = new Color(220, 225, 230);
     public static final Color MUTED = new Color(150, 160, 175);
-    public static final Color CYAN = new Color(0, 210, 245);
-    public static final Color CYAN_DARK = new Color(0, 105, 130);
-    public static final Color WARNING = new Color(255, 205, 95);
-    public static final Color DANGER = new Color(255, 90, 90);
-    public static final Color SUCCESS = new Color(110, 255, 180);
+    public static final Color CYAN = new Color(0x1B3B6F);
+    public static final Color CYAN_DARK = new Color(0x002147);
+    public static final Color WARNING = new Color(0xF6D8CE);
+    public static final Color DANGER = new Color(0x630000);
+    public static final Color SUCCESS = new Color(0x355E3B);
+
 
     private UiStyle() {
     }
 
     public static JPanel createBackgroundPanel() {
-        return new JPanel() {
+        return new JPanel(new BorderLayout()) {
 
             private final Image backgroundImage =
                 ImageLoader.load(AppConfig.IMAGE_DIR + "outside_bg.png");
@@ -260,3 +261,4 @@ public final class UiStyle {
         }
     }
 }
+

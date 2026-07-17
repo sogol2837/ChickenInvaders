@@ -22,7 +22,8 @@ public class StorePanel extends JPanel {
         setOpaque(false);
 
         JPanel background = UiStyle.createBackgroundPanel();
-        background.setBorder(BorderFactory.createEmptyBorder(22, 34, 24, 34));
+        background.setLayout(new BorderLayout(0, 10));
+        background.setBorder(BorderFactory.createEmptyBorder(8, 34, 14, 34));
         add(background, BorderLayout.CENTER);
 
         JPanel topPanel = new JPanel(new GridLayout(3, 1));
