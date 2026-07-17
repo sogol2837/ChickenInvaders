@@ -64,6 +64,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean resultSaved;
 
     private long freezeUntil;
+    private long timedPauseStartedAt;
+
     private boolean showSettingsOverlay;
 
     private boolean leftPressed;
@@ -99,7 +101,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         timer.start();
     }
 
+    private void clearPreviousLevelObjects() {
+        bullets.clear();
+        powerUps.clear();
+
+        freezeUntil = 0;
+        timedPauseStartedAt = 0;
+
+        plane.clearTemporaryPowerUps();
+    }
+
     private void startLevel() {
+        clearPreviousLevelObjects();
         int level = levelManager.getCurrentLevel();
 
         if (levelManager.isBossLevel()) {
@@ -114,6 +127,42 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
+
+    private long currentGameTime() {
+        if (timedPauseStartedAt != 0) {
+            return timedPauseStartedAt;
+        }
+        return System.currentTimeMillis();
+    }
+
+    private void beginTimedPause() {
+        if (timedPauseStartedAt != 0) {
+            return;
+        }
+
+        timedPauseStartedAt = System.currentTimeMillis();
+        plane.pauseTimedEffects(timedPauseStartedAt);
+    }
+
+    private void finishTimedPauseIfPossible() {
+        if (timedPauseStartedAt == 0) {
+            return;
+        }
+        if (gameState == GameState.PAUSED || showSettingsOverlay) {
+            return;
+        }
+
+        long resumeTime = System.currentTimeMillis();
+        long pausedDuration = resumeTime - timedPauseStartedAt;
+
+        if (freezeUntil > timedPauseStartedAt) {
+            freezeUntil += pausedDuration;
+        }
+
+        plane.resumeTimedEffects(resumeTime);
+        timedPauseStartedAt = 0;
+    }
+
     private void updateGame() {
         if (gameState != GameState.RUNNING || showSettingsOverlay) {
             return;
@@ -124,7 +173,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         updateBullets();
 
-        boolean frozen = System.currentTimeMillis() < freezeUntil;
+        boolean frozen = currentGameTime() < freezeUntil;
 
         if (levelManager.isBossLevel()) {
             if (boss != null) {
@@ -167,18 +216,28 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (resultSaved) {
             return;
         }
-
         gameState = finalState;
         timer.stop();
-        resultSaved = true;
-
         SoundManager.getInstance().stopMusic();
 
         if (finalState == GameState.WIN) {
-            SoundManager.getInstance().playWin();
-        } else {
-            SoundManager.getInstance().playGameOver();
+        SoundManager.getInstance().playWin();
         }
+        else {
+        SoundManager.getInstance().playGameOver();
+        }
+
+        saveCurrentGameResult();
+        repaint();
+    }
+
+    private void saveCurrentGameResult() {
+
+        if (resultSaved) {
+            return;
+        }
+
+        resultSaved = true;
 
         GameRecord record = GameRecord.newRecord(
             user.getUsername(),
@@ -186,15 +245,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             levelManager.getCurrentLevel(),
             user.getSoundSettings()
         );
+
         scoreRepository.saveRecord(record);
+        user.setLastLevel(levelManager.getCurrentLevel());
 
         if (scoreManager.getScore() > user.getHighScore()) {
             user.setHighScore(scoreManager.getScore());
-            user.setLastLevel(levelManager.getCurrentLevel());
-            app.getUserRepository().updateUser(user);
         }
 
-        repaint();
+        app.getUserRepository().updateUser(user);
+    }
+
+    private void exitToMainMenu() {
+        timer.stop();
+        SoundManager.getInstance().stopMusic();
+        saveCurrentGameResult();
+        app.showMainMenu();
     }
 
     private void updatePowerUps() {
@@ -203,7 +269,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             if (powerUp.isActive() && powerUp.intersects(plane)) {
                 if (powerUp.getType() == PowerUpType.FREEZE_BOMB) {
-                    freezeUntil = System.currentTimeMillis() + FREEZE_DURATION_MS;
+                    freezeUntil = currentGameTime() + FREEZE_DURATION_MS;
                 } else {
                     plane.applyPowerUp(powerUp.getType());
                 }
@@ -242,7 +308,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void shoot() {
-        if (gameState != GameState.RUNNING) {
+        if (gameState != GameState.RUNNING || showSettingsOverlay) {
             return;
         }
         List<Bullet> newBullets = plane.shoot();
@@ -321,7 +387,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g2.setColor(new Color(0xF6D8CE));
             g2.drawString("RAPID " + plane.getRapidFireSecondsLeft() + "s", statusX, 32);
         }
-        if (System.currentTimeMillis() < freezeUntil) {
+        if (currentGameTime() < freezeUntil) {
             g2.setColor(new Color(170, 210, 255));
             g2.drawString("ENEMIES FROZEN", 620, 32);
         }
@@ -511,48 +577,93 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         repaint();
     }
 
+    private void clearMovementKeys() {
+        leftPressed = false;
+        rightPressed = false;
+        upPressed = false;
+        downPressed = false;
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
+        //game over or win screen
         if (gameState == GameState.GAME_OVER || gameState == GameState.WIN) {
             if (key == KeyEvent.VK_ENTER || key == KeyEvent.VK_R) {
                 app.startNewGame();
                 return;
             }
             if (key == KeyEvent.VK_ESCAPE) {
-                timer.stop();
-                app.showMainMenu();
+                exitToMainMenu();
                 return;
             }
+            return;
         }
 
-        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) leftPressed = true;
-        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) rightPressed = true;
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) upPressed = true;
-        if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) downPressed = true;
-
-        if (key == KeyEvent.VK_SPACE) {
-            shoot();
+        //exit current game
+        if (key == KeyEvent.VK_ESCAPE) {
+            exitToMainMenu();
+            return;
         }
 
+        //open or close in-game settings
+        if (key == KeyEvent.VK_M) {
+            showSettingsOverlay = !showSettingsOverlay;
+            clearMovementKeys();
+
+            if (showSettingsOverlay) {
+                beginTimedPause();
+            }
+            else {
+                finishTimedPauseIfPossible();
+            }
+            return;
+        }
+
+        //when settings is open, only settings keys are accepted
+        if (showSettingsOverlay) {
+            toggleSettingsFromKey(key);
+            return;
+        }
+
+        //pause or resume game
         if (key == KeyEvent.VK_P) {
             if (gameState == GameState.RUNNING) {
                 gameState = GameState.PAUSED;
-            } else if (gameState == GameState.PAUSED) {
-                gameState = GameState.RUNNING;
+                clearMovementKeys();
+                beginTimedPause();
             }
+            else if (gameState == GameState.PAUSED) {
+                gameState = GameState.RUNNING;
+                finishTimedPauseIfPossible();
+            }
+            return;
         }
 
-        if (key == KeyEvent.VK_ESCAPE) {
-            timer.stop();
-            app.showMainMenu();
+        //do not accept movement or shooting while paused
+        if (gameState != GameState.RUNNING) {
+            return;
+            }
+
+        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
+            leftPressed = true;
         }
 
-        if (key == KeyEvent.VK_M) {
-            showSettingsOverlay = !showSettingsOverlay;
-        } else if (showSettingsOverlay) {
-            toggleSettingsFromKey(key);
+        if (key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
+            rightPressed = true;
+        }
+
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_W) {
+            upPressed = true;
+        }
+
+        if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S) {
+            downPressed = true;
+        }
+
+        if (key == KeyEvent.VK_SPACE) {
+            shoot();
         }
     }
 

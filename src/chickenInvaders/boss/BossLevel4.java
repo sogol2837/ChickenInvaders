@@ -10,29 +10,29 @@ public class BossLevel4 extends Boss {
 
     private static final int WIDTH = 250;
     private static final int HEIGHT = 200;
-    private static final double H_SPEED = 1.5;
-    private static final double V_RANGE = 30;
+    private static final double H_SPEED = 2.2;
+    private static final double V_RANGE = 55;
     private static final int EGG_SPEED = 4;
 
-    private int hDirection = 1;
+    private int hDirection = -1;
     private double vPhase;
     private final int baseY;
 
     public BossLevel4() {
-        super(AppConfig.WINDOW_WIDTH / 2 - WIDTH / 2, 60, WIDTH, HEIGHT, 50, 1500, 500);
+        super(AppConfig.WINDOW_WIDTH - WIDTH - 40, 120, WIDTH, HEIGHT, 50, 1500, 500);
         baseY = y;
     }
 
     @Override
     protected void moveBoss() {
         int nextX = x + (int) Math.round(hDirection * H_SPEED);
-        if (nextX <= 0 || nextX + width >= AppConfig.WINDOW_WIDTH) {
+        if (nextX <= 10 || nextX + width >= AppConfig.WINDOW_WIDTH - 10) {
             hDirection *= -1;
-        } else {
+        }
+        else {
             x = nextX;
         }
-
-        vPhase += 0.03;
+        vPhase += 0.04;
         y = (int) Math.round(baseY + Math.sin(vPhase) * V_RANGE);
     }
 

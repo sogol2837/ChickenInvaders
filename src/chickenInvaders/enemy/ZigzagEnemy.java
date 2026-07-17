@@ -15,7 +15,7 @@ public class ZigzagEnemy extends Enemy {
 
     @Override
     public double getArrivalWobble() {
-        return 2.5;
+        return 3.5;
     }
 
     @Override

@@ -19,8 +19,8 @@ public class EnemyGrid {
     private static final int START_Y = 70;
     private static final int GAP_X = 75;
     private static final int GAP_Y = 55;
-    private static final int MAX_ENEMY_WIDTH = 44;
-    private static final int MAX_ENEMY_HEIGHT = 36;
+    private static final int MAX_ENEMY_WIDTH = 60;
+    private static final int MAX_ENEMY_HEIGHT = 50;
     private static final int EDGE_MARGIN = 20;
 
 
@@ -170,7 +170,9 @@ public class EnemyGrid {
 
             if (enemy instanceof ZigzagEnemy) {
                 cell.advanceWobble();
-                x += Math.sin(cell.getWobblePhase()) * 12;
+                double phase = cell.getWobblePhase() + (cell.getHomeX() + cell.getHomeY()) * 0.01;
+                x += Math.sin(phase) * 22;
+                y += Math.sin(phase * 2) * 7;
             }
 
             enemy.setX((int) Math.round(x));
@@ -204,9 +206,12 @@ public class EnemyGrid {
             double moveY = dy / distance * arrivalSpeed;
 
             double wobble = enemy.getArrivalWobble();
+
             if (wobble > 0) {
                 cell.advanceWobble();
-                moveX += Math.sin(cell.getWobblePhase()) * wobble;
+                double phase = cell.getWobblePhase();
+                moveX += Math.sin(phase) * wobble;
+                moveY += Math.cos(phase) * (wobble * 0.35);
             }
 
             enemy.move((int) Math.round(moveX), (int) Math.round(moveY));

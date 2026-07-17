@@ -9,21 +9,21 @@ import java.awt.Graphics;
 
 public class BossLevel8 extends Boss {
 
-    private static final int WIDTH = 250;
-    private static final int HEIGHT = 200;
-    private static final double MAX_H_SPEED = 2.0;
-    private static final double V_RANGE = 100;
+    private static final int WIDTH = 300;
+    private static final int HEIGHT = 300;
+    private static final double MAX_H_SPEED = 2.5;
+    private static final double V_RANGE = 70;
     private static final double EGG_SPEED = 5;
     private static final int DIRECTIONS = 8;
 
-    private double hVelocity = 1.0;
-    private int hDirection = 1;
+    private double hVelocity = 1.3;
+    private int hDirection = -1;
     private double vPhase;
     private final int baseY;
     private int directionChangeCooldown;
 
     public BossLevel8() {
-        super(AppConfig.WINDOW_WIDTH / 2 - WIDTH / 2, 50, WIDTH, HEIGHT, 100, 1000, 1000);
+        super(AppConfig.WINDOW_WIDTH - WIDTH - 40, 90, WIDTH, HEIGHT, 100, 1000, 1000);
         baseY = y;
     }
 
@@ -47,7 +47,7 @@ public class BossLevel8 extends Boss {
         }
 
         vPhase += 0.02;
-        y = (int) Math.round(baseY + Math.sin(vPhase) * (V_RANGE / 2));
+        y = (int) Math.round(baseY + Math.sin(vPhase) * V_RANGE);
     }
 
     @Override

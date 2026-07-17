@@ -30,6 +30,8 @@ public class Plane extends GameObject {
     private long shieldUntil;
     private long rapidFireUntil;
 
+    private long timedPauseStartedAt;
+
     public Plane(int x, int y) {
         this(x, y, PlaneType.DEFAULT);
     }
@@ -47,7 +49,7 @@ public class Plane extends GameObject {
 
     @Override
     public void update() {
-        long now = System.currentTimeMillis();
+        long now = currentTime();
 
         if (rapidFireUntil != 0 && now >= rapidFireUntil) {
             rapidFireUntil = 0;
@@ -90,7 +92,7 @@ public class Plane extends GameObject {
     public List<Bullet> shoot() {
         List<Bullet> newBullets = new ArrayList<>();
 
-        long now = System.currentTimeMillis();
+        long now = currentTime();
         if (now - lastShotTime < fireDelay) {
             return newBullets;
         }
@@ -171,7 +173,7 @@ public class Plane extends GameObject {
     }
 
     public void applyPowerUp(PowerUpType type) {
-        long now = System.currentTimeMillis();
+        long now = currentTime();
 
         switch (type) {
             case ADD_FIRE -> fireCount = Math.min(MAX_FIRE_COUNT, fireCount + 1);
@@ -188,19 +190,19 @@ public class Plane extends GameObject {
     }
 
     public boolean isShieldActive() {
-        return System.currentTimeMillis() < shieldUntil;
+        return currentTime() < shieldUntil;
     }
 
     public boolean isRapidFireActive() {
-        return rapidFireUntil != 0;
+        return currentTime() < rapidFireUntil;
     }
 
     public long getShieldSecondsLeft() {
-        return Math.max(0, (shieldUntil - System.currentTimeMillis()) / 1000 + 1);
+        return Math.max(0, (shieldUntil - currentTime()) / 1000 + 1);
     }
 
     public long getRapidFireSecondsLeft() {
-        return Math.max(0, (rapidFireUntil - System.currentTimeMillis()) / 1000 + 1);
+        return Math.max(0, (rapidFireUntil - currentTime()) / 1000 + 1);
     }
 
     private String planeImageName() {
@@ -210,5 +212,50 @@ public class Plane extends GameObject {
             case HEAVY -> "plane3.png";
             case SNIPER -> "plane4.png";
         };
+    }
+
+
+    private long currentTime() {
+
+        if (timedPauseStartedAt != 0) {
+            return timedPauseStartedAt;
+        }
+
+        return System.currentTimeMillis();
+    }
+
+    public void pauseTimedEffects(long pauseTime) {
+        if (timedPauseStartedAt == 0) {
+            timedPauseStartedAt = pauseTime;
+        }
+    }
+
+    public void resumeTimedEffects(long resumeTime) {
+        if (timedPauseStartedAt == 0) {
+            return;
+        }
+        long pausedDuration = resumeTime - timedPauseStartedAt;
+
+        if (shieldUntil > timedPauseStartedAt) {
+            shieldUntil += pausedDuration;
+        }
+        if (rapidFireUntil > timedPauseStartedAt) {
+            rapidFireUntil += pausedDuration;
+        }
+        if (lastShotTime > 0) {
+            lastShotTime += pausedDuration;
+        }
+
+        timedPauseStartedAt = 0;
+    }
+
+    public void clearTemporaryPowerUps() {
+        shieldUntil = 0;
+        rapidFireUntil = 0;
+
+        fireDelay = baseFireDelay;
+        lastShotTime = 0;
+
+        timedPauseStartedAt = 0;
     }
 }
