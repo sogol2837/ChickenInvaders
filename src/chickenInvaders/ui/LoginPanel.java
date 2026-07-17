@@ -20,47 +20,70 @@ public class LoginPanel extends JPanel {
         setOpaque(false);
 
         JPanel background = UiStyle.createBackgroundPanel();
-        background.setBorder(BorderFactory.createEmptyBorder(22, 40, 30, 40));
+        background.setLayout(new BorderLayout());
+        background.setBorder(BorderFactory.createEmptyBorder(8, 40, 12, 40));
         add(background, BorderLayout.CENTER);
 
-        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel topPanel = new JPanel();
         topPanel.setOpaque(false);
-        topPanel.add(UiStyle.title("PILOT LOGIN"));
-        topPanel.add(UiStyle.subtitle("enter your account to start the mission"));
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setPreferredSize(new Dimension(1, 150));
+
+        JLabel titleLabel = UiStyle.title("PILOT LOGIN");
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(14, 20, 6, 20));
+
+        JLabel subtitleLabel = UiStyle.subtitle("enter your account to start the mission");
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        topPanel.add(titleLabel);
+        topPanel.add(Box.createVerticalStrut(14));
+        topPanel.add(subtitleLabel);
 
         JPanel card = UiStyle.card();
         card.setLayout(new GridBagLayout());
-        card.setPreferredSize(new Dimension(420, 310));
+        card.setPreferredSize(new Dimension(520, 340));
 
         usernameField = new JTextField();
         passwordField = new JPasswordField();
+
         UiStyle.styleTextField(usernameField);
         UiStyle.styleTextField(passwordField);
+
+        usernameField.setPreferredSize(new Dimension(460, 38));
+        passwordField.setPreferredSize(new Dimension(460, 38));
 
         JButton loginButton = UiStyle.primaryButton("LOGIN");
         JButton registerButton = UiStyle.secondaryButton("CREATE ACCOUNT");
         JButton backButton = UiStyle.secondaryButton("BACK");
+
+        loginButton.setPreferredSize(new Dimension(460, 42));
+        registerButton.setPreferredSize(new Dimension(460, 42));
+        backButton.setPreferredSize(new Dimension(460, 42));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
-        gbc.insets = new Insets(5, 5, 8, 5);
+
+        gbc.insets = new Insets(2, 5, 8, 5);
         card.add(labeled("USERNAME", usernameField), gbc);
 
         gbc.gridy++;
+        gbc.insets = new Insets(4, 5, 10, 5);
         card.add(labeled("PASSWORD", passwordField), gbc);
 
         gbc.gridy++;
-        gbc.insets = new Insets(16, 5, 6, 5);
+        gbc.insets = new Insets(10, 5, 6, 5);
         card.add(loginButton, gbc);
 
         gbc.gridy++;
-        gbc.insets = new Insets(6, 5, 6, 5);
+        gbc.insets = new Insets(5, 5, 5, 5);
         card.add(registerButton, gbc);
 
         gbc.gridy++;
+        gbc.insets = new Insets(5, 5, 2, 5);
         card.add(backButton, gbc);
 
         JPanel center = new JPanel(new GridBagLayout());

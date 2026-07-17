@@ -89,9 +89,9 @@ public class EnemyGrid {
             case 1 -> { speed = 0.7; verticalStep = 20; eggIntervalMs = 3000; }
             case 2 -> { speed = 1.0; verticalStep = 20; eggIntervalMs = 2000; }
             case 3 -> { speed = 1.3; verticalStep = 25; eggIntervalMs = 1500; }
-            case 5 -> { speed = 1.7; verticalStep = 25; eggIntervalMs = 1000; }
-            case 6 -> { speed = 2.0; verticalStep = 30; eggIntervalMs = 800; }
-            case 7 -> { speed = 2.3; verticalStep = 30; eggIntervalMs = 700; }
+            case 5 -> { speed = 1.5; verticalStep = 25; eggIntervalMs = 1000; }
+            case 6 -> { speed = 1.7; verticalStep = 30; eggIntervalMs = 800; }
+            case 7 -> { speed = 2.0; verticalStep = 30; eggIntervalMs = 700; }
             default -> { speed = 0.7; verticalStep = 20; eggIntervalMs = 3000; }
         }
     }

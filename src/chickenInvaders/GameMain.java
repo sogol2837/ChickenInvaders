@@ -66,6 +66,8 @@ public class GameMain extends JFrame {
 
     public void showMainMenu() {
         mainMenuPanel.refreshUserLabel();
+        SoundManager.getInstance().applySettings(getCurrentSoundSettings());
+        SoundManager.getInstance().playMusic();
         cardLayout.show(rootPanel, "menu");
     }
 
@@ -107,6 +109,9 @@ public class GameMain extends JFrame {
         GamePanel gamePanel = new GamePanel(this, currentUser);
         rootPanel.add(gamePanel, "game");
         cardLayout.show(rootPanel, "game");
+
+        SoundManager.getInstance().applySettings(getCurrentSoundSettings());
+        SoundManager.getInstance().playMusic();
 
         gamePanel.startGame();
 

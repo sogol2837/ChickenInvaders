@@ -164,13 +164,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void endGame(int finalState) {
-        gameState = finalState;
-        timer.stop();
-
         if (resultSaved) {
             return;
         }
+
+        gameState = finalState;
+        timer.stop();
         resultSaved = true;
+
+        SoundManager.getInstance().stopMusic();
 
         if (finalState == GameState.WIN) {
             SoundManager.getInstance().playWin();
@@ -191,6 +193,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             user.setLastLevel(levelManager.getCurrentLevel());
             app.getUserRepository().updateUser(user);
         }
+
+        repaint();
     }
 
     private void updatePowerUps() {
@@ -253,7 +257,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
 
         if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT, null);
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
         }
 
         if (levelManager.isBossLevel()) {
@@ -296,7 +300,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         drawHudBox(g2, 14, 10, 520, 34);
         drawHudBox(g2, 540, 10, 246, 34);
-        drawHudBox(g2, 14, AppConfig.WINDOW_HEIGHT - 38, 380, 24);
 
         g2.setFont(new Font("Monospaced", Font.BOLD, 15));
         g2.setColor(Color.WHITE);
@@ -315,7 +318,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             statusX += 105;
         }
         if (plane.isRapidFireActive()) {
-            g2.setColor(new Color(255, 180, 90));
+            g2.setColor(new Color(0xF6D8CE));
             g2.drawString("RAPID " + plane.getRapidFireSecondsLeft() + "s", statusX, 32);
         }
         if (System.currentTimeMillis() < freezeUntil) {
@@ -325,7 +328,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         g2.setColor(new Color(230, 235, 245));
         g2.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        g2.drawString("P Pause   M Sound Settings   ESC Menu   SPACE Shoot", 24, AppConfig.WINDOW_HEIGHT - 21);
         g2.dispose();
     }
 
@@ -343,19 +345,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        int panelW = getWidth();
+        int panelH = getHeight();
+
         g2.setColor(new Color(0, 0, 0, 205));
-        g2.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
+        g2.fillRect(0, 0, panelW, panelH);
 
         int cardW = 420;
         int cardH = 250;
-        int cardX = (AppConfig.WINDOW_WIDTH - cardW) / 2;
-        int cardY = 140;
+        int cardX = (panelW - cardW) / 2;
+        int cardY = (panelH - cardH) / 2;
 
         drawOverlayCard(g2, cardX, cardY, cardW, cardH, UiStyle.CYAN);
 
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Monospaced", Font.BOLD, 28));
-        drawCentered(g2, "SOUND SETTINGS", AppConfig.WINDOW_WIDTH / 2, cardY + 42);
+        drawCentered(g2, "SOUND SETTINGS", panelW / 2, cardY + 42);
 
         SoundSettings settings = user.getSoundSettings();
         g2.setFont(new Font("Monospaced", Font.PLAIN, 18));
@@ -366,7 +371,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         g2.setColor(UiStyle.MUTED);
         g2.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        drawCentered(g2, "Press M to close", AppConfig.WINDOW_WIDTH / 2, cardY + 220);
+        drawCentered(g2, "Press M to close", panelW / 2, cardY + 220);
+
         g2.dispose();
     }
 
@@ -384,16 +390,27 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setColor(new Color(0, 0, 0, 175));
-        g2.fillRect(0, 0, AppConfig.WINDOW_WIDTH, AppConfig.WINDOW_HEIGHT);
+        int panelW = getWidth();
+        int panelH = getHeight();
 
-        drawOverlayCard(g2, 210, 200, 380, 150, UiStyle.CYAN);
+        g2.setColor(new Color(0, 0, 0, 175));
+        g2.fillRect(0, 0, panelW, panelH);
+
+        int cardW = 380;
+        int cardH = 155;
+        int cardX = (panelW - cardW) / 2;
+        int cardY = (panelH - cardH) / 2;
+
+        drawOverlayCard(g2, cardX, cardY, cardW, cardH, UiStyle.CYAN);
+
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Monospaced", Font.BOLD, 42));
-        drawCentered(g2, "PAUSED", AppConfig.WINDOW_WIDTH / 2, 255);
+        drawCentered(g2, "PAUSED", panelW / 2, cardY + 62);
+
         g2.setFont(new Font("Monospaced", Font.PLAIN, 16));
         g2.setColor(UiStyle.MUTED);
-        drawCentered(g2, "Press P to continue", AppConfig.WINDOW_WIDTH / 2, 305);
+        drawCentered(g2, "Press P to continue", panelW / 2, cardY + 112);
+
         g2.dispose();
     }
 
@@ -409,25 +426,33 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setPaint(new GradientPaint(0, 0, new Color(0, 0, 0, 210), 0, getHeight(), new Color(8, 12, 20, 235)));
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        int panelW = getWidth();
+        int panelH = getHeight();
+
+        g2.setPaint(new GradientPaint(
+            0, 0, new Color(0, 0, 0, 210),
+            0, panelH, new Color(8, 12, 20, 235)
+        ));
+        g2.fillRect(0, 0, panelW, panelH);
 
         Color accent = win ? UiStyle.SUCCESS : UiStyle.DANGER;
+
         int cardW = 470;
-        int cardH = 280;
-        int cardX = (getWidth() - cardW) / 2;
-        int cardY = 155;
+        int cardH = 315;
+        int cardX = (panelW - cardW) / 2;
+        int cardY = (panelH - cardH) / 2;
+
         drawOverlayCard(g2, cardX, cardY, cardW, cardH, accent);
 
         g2.setColor(accent);
         g2.setFont(new Font("Monospaced", Font.BOLD, 40));
-        drawCentered(g2, win ? "VICTORY" : "GAME OVER", getWidth() / 2, cardY + 52);
+        drawCentered(g2, win ? "VICTORY" : "GAME OVER", panelW / 2, cardY + 52);
 
         g2.setColor(Color.WHITE);
         g2.setFont(new Font("Monospaced", Font.PLAIN, 16));
         drawCentered(g2,
             win ? "The galaxy is safe. Great job, pilot." : "Your ship was destroyed. Try again.",
-            getWidth() / 2,
+            panelW / 2,
             cardY + 82
         );
 
@@ -438,10 +463,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         g2.setColor(new Color(230, 235, 245));
         g2.setFont(new Font("Monospaced", Font.BOLD, 15));
-        drawCentered(g2, "ENTER / R  PLAY AGAIN", getWidth() / 2, cardY + 260);
+        drawCentered(g2, "ENTER / R  PLAY AGAIN", panelW / 2, cardY + 270);
+
         g2.setColor(UiStyle.MUTED);
         g2.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        drawCentered(g2, "ESC  MAIN MENU", getWidth() / 2, cardY + 282);
+        drawCentered(g2, "ESC  MAIN MENU", panelW / 2, cardY + 295);
 
         g2.dispose();
     }
