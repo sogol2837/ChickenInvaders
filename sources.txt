@@ -7,7 +7,6 @@ src/chickenInvaders/boss/BossHealthBar.java
 src/chickenInvaders/boss/BossLevel4.java
 src/chickenInvaders/boss/BossLevel8.java
 src/chickenInvaders/data/DatabaseManager.java
-src/chickenInvaders/data/FileStorage.java
 src/chickenInvaders/data/ScoreRepository.java
 src/chickenInvaders/data/UserRepository.java
 src/chickenInvaders/enemy/Enemy.java
@@ -25,14 +24,12 @@ src/chickenInvaders/entity/Plane.java
 src/chickenInvaders/entity/PowerUp.java
 src/chickenInvaders/game/CollisionManager.java
 src/chickenInvaders/game/GamePanel.java
-src/chickenInvaders/game/InputHandler.java
 src/chickenInvaders/game/LevelManager.java
 src/chickenInvaders/game/ScoreManager.java
 src/chickenInvaders/GameMain.java
 src/chickenInvaders/GameState.java
 src/chickenInvaders/model/EnemyType.java
 src/chickenInvaders/model/GameRecord.java
-src/chickenInvaders/model/PanelType.java
 src/chickenInvaders/model/PlaneType.java
 src/chickenInvaders/model/PowerUpType.java
 src/chickenInvaders/model/SoundSettings.java
