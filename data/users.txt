@@ -1,4 +1,4 @@
-s|s|13765|5|1,0,0,1|DEFAULT
+s|s|13765|1|1,0,0,1|HEAVY
 soflower|soflower|1075|3|1,1,1,1|DEFAULT
-max|max|9575|7|1,0,0,1|DEFAULT
+max|max|9875|5|1,0,0,1|HEAVY
 a|a|50|1|1,1,1,1|DEFAULT

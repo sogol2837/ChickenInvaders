@@ -23,7 +23,7 @@ public class BossLevel8 extends Boss {
     private int directionChangeCooldown;
 
     public BossLevel8() {
-        super(AppConfig.WINDOW_WIDTH - WIDTH - 40, 90, WIDTH, HEIGHT, 100, 1000, 1000);
+        super(AppConfig.WINDOW_WIDTH - WIDTH - 40, 90, WIDTH, HEIGHT, 150, 1000, 1000);
         baseY = y;
     }
 

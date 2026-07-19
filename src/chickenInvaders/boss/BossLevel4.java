@@ -19,7 +19,7 @@ public class BossLevel4 extends Boss {
     private final int baseY;
 
     public BossLevel4() {
-        super(AppConfig.WINDOW_WIDTH - WIDTH - 40, 120, WIDTH, HEIGHT, 50, 1500, 500);
+        super(AppConfig.WINDOW_WIDTH - WIDTH - 40, 120, WIDTH, HEIGHT, 100, 1500, 500);
         baseY = y;
     }
 
