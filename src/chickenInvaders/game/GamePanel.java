@@ -264,7 +264,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             if (boss != null) {
                 boss.draw(g);
             }
-        } else {
+        }
+        else {
             enemyGrid.draw(g);
         }
 
@@ -295,39 +296,71 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawHud(Graphics g) {
+
         Graphics2D g2 = (Graphics2D) g.create();
+
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        drawHudBox(g2, 14, 10, 520, 34);
-        drawHudBox(g2, 540, 10, 246, 34);
+        drawHudBox(g2, 14, 10, 500, 28);
+        drawHudBox(g2, 520, 10, 210, 28);
 
-        g2.setFont(new Font("Monospaced", Font.BOLD, 15));
+        g2.setFont(new Font("Monospaced", Font.BOLD, 12));
+
+        String displayName = user.getUsername();
+
+        if (displayName.length() > 10) {
+            displayName = displayName.substring(0, 7) + "...";
+        }
+
         g2.setColor(Color.WHITE);
-        g2.drawString("USER: " + user.getUsername(), 25, 32);
-        g2.drawString("LEVEL: " + levelManager.getCurrentLevel(), 155, 32);
-        g2.drawString("SCORE: " + scoreManager.getScore(), 285, 32);
-        g2.drawString("LIVES: " + plane.getLives(), 445, 32);
+
+        g2.drawString("USER: " + displayName, 24, 29);
+        g2.drawString("LEVEL: " + levelManager.getCurrentLevel(), 145, 29);
+        g2.drawString("SCORE: " + scoreManager.getScore(), 245, 29);
+        g2.drawString("LIVES: " + plane.getLives(), 355, 29);
 
         g2.setColor(UiStyle.WARNING);
-        g2.drawString("FIRE: " + plane.getFireCount(), 555, 32);
+        g2.drawString("FIRE: " + plane.getFireCount(), 460, 29);
 
-        int statusX = 650;
+        int statusX = 588;
+        boolean hasActiveStatus = false;
+
         if (plane.isShieldActive()) {
             g2.setColor(UiStyle.CYAN);
-            g2.drawString("SHIELD " + plane.getShieldSecondsLeft() + "s", statusX, 32);
-            statusX += 105;
-        }
-        if (plane.isRapidFireActive()) {
-            g2.setColor(new Color(0xF6D8CE));
-            g2.drawString("RAPID " + plane.getRapidFireSecondsLeft() + "s", statusX, 32);
-        }
-        if (System.currentTimeMillis() < freezeUntil) {
-            g2.setColor(new Color(170, 210, 255));
-            g2.drawString("ENEMIES FROZEN", 620, 32);
+            g2.drawString(
+                "Shield:" + plane.getShieldSecondsLeft() + "s",
+                statusX,
+                29
+            );
+            statusX += 48;
+            hasActiveStatus = true;
         }
 
-        g2.setColor(new Color(230, 235, 245));
-        g2.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        if (plane.isRapidFireActive()) {
+            g2.setColor(new Color(0xF6D8CE));
+            g2.drawString("RapidFire:" + plane.getRapidFireSecondsLeft() + "s", statusX, 29);
+
+            statusX += 48;
+            hasActiveStatus = true;
+        }
+
+        long freezeTimeLeft = freezeUntil - System.currentTimeMillis();
+
+        if (freezeTimeLeft > 0) {
+            int freezeSecondsLeft = (int) Math.ceil(freezeTimeLeft / 1000.0);
+
+            g2.setColor(new Color(170, 210, 255));
+
+            g2.drawString("Freeze:" + freezeSecondsLeft + "s", statusX, 29);
+            hasActiveStatus = true;
+        }
+
+        //shown when no temporary power-up is active
+        if (!hasActiveStatus) {
+            g2.setColor(UiStyle.MUTED);
+            drawCentered(g2, "READY", 680, 29);
+        }
+
         g2.dispose();
     }
 
