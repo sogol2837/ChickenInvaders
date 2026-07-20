@@ -104,6 +104,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private void clearPreviousLevelObjects() {
         bullets.clear();
         powerUps.clear();
+        explosions.clear();
 
         freezeUntil = 0;
         timedPauseStartedAt = 0;

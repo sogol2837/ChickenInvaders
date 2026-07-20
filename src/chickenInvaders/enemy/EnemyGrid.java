@@ -149,14 +149,18 @@ public class EnemyGrid {
     }
 
     private void moveFormation() {
+
         double nextShiftX = shiftX + direction * speed;
+
         double leftEdge = START_X + nextShiftX;
+
         double rightEdge = START_X + (COLS - 1) * GAP_X + MAX_ENEMY_WIDTH + nextShiftX;
 
         if (leftEdge <= EDGE_MARGIN || rightEdge >= AppConfig.WINDOW_WIDTH - EDGE_MARGIN) {
             direction *= -1;
             shiftY += verticalStep;
-        } else {
+        }
+        else {
             shiftX = nextShiftX;
         }
 
@@ -164,13 +168,26 @@ public class EnemyGrid {
             if (cell.isArriving() || cell.getOccupant() == null) {
                 continue;
             }
+
             Enemy enemy = cell.getOccupant();
-            double x = cell.getHomeX() + shiftX;
             double y = cell.getHomeY() + shiftY;
 
+            //fast enemies move independently across the screen
+            if (enemy instanceof FastEnemy fastEnemy) {
+                fastEnemy.updateFastMovement(speed, AppConfig.WINDOW_WIDTH, EDGE_MARGIN);
+                //fast enemy stays in its original row
+                enemy.setY((int) Math.round(y));
+                continue;
+            }
+
+            double x = cell.getHomeX() + shiftX;
+
+            //zigzag enemy stays near its cell and moves in a wave
             if (enemy instanceof ZigzagEnemy) {
                 cell.advanceWobble();
+
                 double phase = cell.getWobblePhase() + (cell.getHomeX() + cell.getHomeY()) * 0.01;
+
                 x += Math.sin(phase) * 22;
                 y += Math.sin(phase * 2) * 7;
             }
