@@ -54,6 +54,7 @@ public class EnemyGrid {
         eggs.clear();
 
         setupLevelParams(level);
+        //how many enemy in each cell
         int startingLives = initialCounterFor(level);
 
         for (int row = 0; row < ROWS; row++) {
@@ -63,7 +64,7 @@ public class EnemyGrid {
                 EnemyType kind = typeFor(level, row, col);
 
                 EnemyCell cell = new EnemyCell(row, col, kind, homeX, homeY, startingLives);
-
+                //enemy fast comes fast from the start
                 if (kind == EnemyType.FAST) {
                     int spawnX;
                     if (RandomUtils.coinFlip()) {
@@ -90,8 +91,8 @@ public class EnemyGrid {
             case 2 -> { speed = 1.0; verticalStep = 20; eggIntervalMs = 2000; }
             case 3 -> { speed = 1.3; verticalStep = 25; eggIntervalMs = 1500; }
             case 5 -> { speed = 1.5; verticalStep = 25; eggIntervalMs = 1000; }
-            case 6 -> { speed = 1.7; verticalStep = 30; eggIntervalMs = 800; }
-            case 7 -> { speed = 2.0; verticalStep = 30; eggIntervalMs = 700; }
+            case 6 -> { speed = 1.0; verticalStep = 30; eggIntervalMs = 800; }
+            case 7 -> { speed = 1.0; verticalStep = 30; eggIntervalMs = 700; }
             default -> { speed = 0.7; verticalStep = 20; eggIntervalMs = 3000; }
         }
     }
@@ -185,10 +186,11 @@ public class EnemyGrid {
             //zigzag enemy stays near its cell and moves in a wave
             if (enemy instanceof ZigzagEnemy) {
                 cell.advanceWobble();
-
+                //diff zigzag forms
                 double phase = cell.getWobblePhase() + (cell.getHomeX() + cell.getHomeY()) * 0.01;
 
                 x += Math.sin(phase) * 22;
+                //faster than x
                 y += Math.sin(phase * 2) * 7;
             }
 
@@ -238,7 +240,7 @@ public class EnemyGrid {
     private void handleRespawns() {
         for (EnemyCell cell : cells) {
             Enemy occupant = cell.getOccupant();
-
+            //arriving part is for preventing two respawns on a cell at once
             if (occupant != null && !occupant.isActive() && !cell.isArriving()) {
                 cell.setOccupant(null);
                 cell.decrementRemaining();

@@ -9,8 +9,8 @@ import java.awt.Graphics;
 
 public class BossLevel8 extends Boss {
 
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 300;
+    private static final int WIDTH = 270;
+    private static final int HEIGHT = 270;
     private static final double MAX_H_SPEED = 2.5;
     private static final double V_RANGE = 70;
     private static final double EGG_SPEED = 5;

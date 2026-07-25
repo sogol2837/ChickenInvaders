@@ -55,7 +55,7 @@ public abstract class Enemy extends GameObject {
     public boolean dropsZigzagEggs() {
         return false;
     }
-
+    //shooter
     public boolean canFireAtPlane() {
         return false;
     }

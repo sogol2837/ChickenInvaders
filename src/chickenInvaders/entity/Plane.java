@@ -216,7 +216,7 @@ public class Plane extends GameObject {
 
 
     private long currentTime() {
-
+        //don't waste power ups while paused
         if (timedPauseStartedAt != 0) {
             return timedPauseStartedAt;
         }
@@ -248,7 +248,7 @@ public class Plane extends GameObject {
 
         timedPauseStartedAt = 0;
     }
-
+    //start new level
     public void clearTemporaryPowerUps() {
         shieldUntil = 0;
         rapidFireUntil = 0;

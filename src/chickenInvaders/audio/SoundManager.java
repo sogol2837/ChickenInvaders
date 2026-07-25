@@ -46,12 +46,12 @@ public final class SoundManager {
             clip.open(stream);
             return clip;
         } catch (Exception e) {
-            // Covers UnsupportedAudioFileException/IOException/LineUnavailableException,
-            // plus AudioSystem.getClip() can also throw an unchecked
-            // IllegalArgumentException when no matching audio line/hardware
-            // is available at all (headless machines, CI, some sandboxes).
-            // A missing sound must never crash the game, so every audio
-            // failure here is swallowed the same way.
+            //covers UnsupportedAudioFileException/IOException/LineUnavailableException,
+            //plus AudioSystem.getClip() can also throw an unchecked
+            //illegalArgumentException when no matching audio line/hardware
+            //is available at all (headless machines, CI, some sandboxes).
+            //a missing sound must never crash the game, so every audio
+            //failure here is swallowed the same way.
             return null;
         }
     }
