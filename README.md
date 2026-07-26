@@ -127,7 +127,7 @@ StarWarsInvaders/
 
 ## GitHub Repository
 
-https://github.com/sogol2837/StarWarsInvaders.git
+https://github.com/sogolbr/StarWarsInvaders.git
 
 ## Notes
 
