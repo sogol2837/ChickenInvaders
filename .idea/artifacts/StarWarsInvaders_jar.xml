@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="StarWarsInvaders:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/StarWarsInvaders_jar</output-path>
-    <root id="archive" name="chickenInvaders_bugfix.jar">
-      <element id="module-output" name="chickenInvaders_bugfix" />
-    </root>
-  </artifact>
-</component>
